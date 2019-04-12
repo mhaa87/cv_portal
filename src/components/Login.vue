@@ -57,14 +57,14 @@ export default {
         ...mapMutations(['setLoginStatus', 'setKey']),
         ...mapActions(['loginAction']),
 
-        toggleLogin: function(register){
+        async toggleLogin(register){
             this.showLogin = register ? (!this.register || !this.showLogin) : (!this.showLogin || this.register);
             this.register = register;
         },
 
-        login: async function(user){
+        async login(user){
             let data = (await this.loginAction({"register": this.register, "user": user})).data;
-            console.log(data);
+            // console.log(data);
             this.error = !data.status;
             if(this.error && this.autoLogin) {this.error = false; return}
             if(this.error){this.errorMsg = data.msg; return;}
@@ -78,7 +78,7 @@ export default {
             // this.getLastCV();
         },
 
-        logout: function(){
+        async logout(){
             this.setLoginStatus(false);
             // this.openMenu = false;
             this.user = {name: "",email: "", password: ""};
@@ -89,7 +89,7 @@ export default {
         this.autoLogin = localStorage.getItem("autoLogin") === "true";
         if(this.autoLogin){
             this.setKey(localStorage.getItem("key")); 
-            if(this.key != null && this.key.length > 0) {console.log("autologin key: " + this.key); this.login(false)}
+            if(this.key != null && this.key.length > 0) this.login(false);
         }
     }
 }

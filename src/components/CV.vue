@@ -1,9 +1,9 @@
-<template><span class="mainGridRows">
+<template><span class="mainGridRows" id="cv">
 
   <div class="topbar middle">
       <button @mousedown="toggleEdit" :class="{selected: editMode}">Edit</button>
-      <button v-if="loggedIn">Save</button>
-      <button>Download</button>
+      <button v-if="loggedIn" @mousedown="saveAction($data)" >Save</button>
+      <button @mousedown="download()" >Download</button>
       <button v-if="loggedIn">Open</button>
   </div>
 
@@ -75,7 +75,7 @@
 </span></template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 // import { mapState } from 'vuex';
 
 export default {
@@ -83,6 +83,7 @@ export default {
 
   data() { return {
     name: "Firstname Lastname",
+    cvName: "default",
     personInfo: [
         {title: "Mobile", text: "12345678"},
         {title: "Email", text: "email@hotmail.com"},
@@ -115,28 +116,40 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['toggleEdit']),
-    
-    getDurationText(duration){
-        var text = "";
-        if(duration.from.month.length > 0) text += duration.from.month + ".";
-        text += duration.from.year;
-        if(duration.to.year.length > 0) text += "-";
-        if(duration.to.month.length > 0) text += duration.to.month + ".";
-        if(duration.to.year.length > 0) text += duration.to.year;
-        return text;
-    },
+      ...mapMutations(['toggleEdit']),
+      ...mapActions(['saveAction']),
 
-    sortListElements: function (a, b) {
-        var from = this.dateToNumber(b.duration.from.month, b.duration.from.year) - this.dateToNumber(a.duration.from.month, a.duration.from.year)
-        var to = this.dateToNumber(b.duration.to.month, b.duration.to.year) - this.dateToNumber(a.duration.to.month, a.duration.to.year)
-        return (to === 0) ?  from : to;
-    },
+      download(){
+          var cv = document.getElementById("print");
+          var popupWin = window.open('', '_blank', 'width= 1000px,height=900,location=no,left=200px, top=20px');
+          popupWin.document.open();
+          popupWin.document.write('<html><title>Preview</title><link rel="stylesheet" type="text/css" href="cvStyle.css" /></head><body onload="window.print()">'
+            + '<div class="CV">'); 
+          popupWin.document.write(cv.innerHTML);
+          popupWin.document.write('</div></body></html>');
+          popupWin.document.close();
+      },
+      
+      getDurationText(duration){
+          var text = "";
+          if(duration.from.month.length > 0) text += duration.from.month + ".";
+          text += duration.from.year;
+          if(duration.to.year.length > 0) text += "-";
+          if(duration.to.month.length > 0) text += duration.to.month + ".";
+          if(duration.to.year.length > 0) text += duration.to.year;
+          return text;
+      },
 
-    dateToNumber(month, year){
-        if(year.length > 0) return (year * 100 + ((month.length > 0) ? month*1 : 0));
-        return 0;
-    },
+      sortListElements: function (a, b) {
+          var from = this.dateToNumber(b.duration.from.month, b.duration.from.year) - this.dateToNumber(a.duration.from.month, a.duration.from.year)
+          var to = this.dateToNumber(b.duration.to.month, b.duration.to.year) - this.dateToNumber(a.duration.to.month, a.duration.to.year)
+          return (to === 0) ?  from : to;
+      },
+
+      dateToNumber(month, year){
+          if(year.length > 0) return (year * 100 + ((month.length > 0) ? month*1 : 0));
+          return 0;
+      },
   }
 
 }
@@ -197,9 +210,7 @@ textarea{
 
 .CV{
   padding: 25px 25px 0px 30px;
-  /* grid-area: 1 / 2 / 2 / 3; */
   overflow: auto;
   background-color: rgb(255, 255, 255);
-  /* height: 95%; */
 }
 </style>
