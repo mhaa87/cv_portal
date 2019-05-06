@@ -1,0 +1,30 @@
+{
+    "name": "Firstname Lastname",
+    "cvName": "default",
+    "personInfo": [
+        {"title": "Mobile", "text": "12345678"},
+        {"title": "Email", "text": "email@hotmail.com"},
+        {"title": "Place", "text": "City"}
+    ],
+    "intro": {"title": "Introduction", "text": "..."},
+    "other": {"title": "Other", "text": "..."},
+    "lists": [
+        {"title": "Experience",
+        "items": [
+        {"duration": {"from": {"year": "2016", "month": "01"}, "to": {"year": "2019", "month": "03"}}, "title": "Job 3", "text": "Info..."},
+        {"duration": {"from": {"year": "2015", "month": "02"}, "to": {"year": "2015", "month": "11"}}, "title": "Job 2", "text": "Info..."}, 
+        {"duration": {"from": {"year": "2013", "month": "09"}, "to": {"year": "2014", "month": "10"}}, "title": "Job 1", "text": "Info..."}
+        ]},
+    {"title": "Education",
+        "items": [
+        {"duration": {"from": {"year": "2010", "month": ""}, "to": {"year": "2013", "month": ""}}, "title": "Study 2", "text": "Info..."}, 
+        {"duration": {"from": {"year": "2009", "month": ""}, "to": {"year": "2010", "month": ""}}, "title": "Study 1", "text": "Info..."}
+        ]}
+    ],
+    "style": {    
+        "font": "'Times New Roman', Times, serif", 
+        "fontSize": 14,
+        "imgLink": "defaultProfileImg.png",
+        "imgSize": "150"
+    }
+}

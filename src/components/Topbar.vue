@@ -1,33 +1,56 @@
 <template>
-<div class="topbar mainGridColumns">
-    <div class="left"><h1>{{title}}</h1></div>
-    <span class="middle topbarButtons">
-        <button @mousedown="toggleEdit" :class="{selected: editMode}">Edit</button>
-        <button v-if="loggedIn">Save</button>
-        <button>Download</button>
-        <button v-if="loggedIn">Open</button>
-    </span>
-    <div class="right topbarButtons">
-        <button v-if="loggedIn">Logout</button>
-        <button v-if="!loggedIn" :class="{selected: showLogin && register}" @click="toggleLogin(true)">Register</button>  
-        <button v-if="!loggedIn" :class="{selected: showLogin && !register}" @click="toggleLogin(false)">Login</button> 
-        <!-- <span v-if="loggedIn" class="centerText">Logged in: {{user.name}}</span> -->
-    </div>
-</div>
+    <div class="mainGridColumns topbar">
+        <h1>{{title}}</h1>
+        
+        <div class="middleTopbar">     
+            <button @mousedown="setEditMode(!editMode)" :class="{selected: editMode}">Edit</button>
+            <span v-if="loggedIn" style="height: 100%">
+                <button v-if="loggedIn" @mousedown="saveAction(content.cvName)" >Save</button>
+                <button @mousedown="loadCVlist(!showCVmenu)" :class="{selected: showCVmenu}">Open</button>
+                <div v-if="showCVmenu" class="cvMenu dropMenu">
+                    <div class="cvList">
+                        <button v-for="(cv, i) in cvList" :key="i" @click="loadCV(cv)" :class="{selected: cv === content.cvName}">{{cv}}</button>
+                    </div>
+                    <div v-if="1 > cvList.length">No saved CVs </div>
+                    <div v-else>
+                        <button @click="deleteCV">Delete '{{content.cvName}}'</button><br>
+                        <button @click="deleteAll">Delete All</button>
+                    </div>
+                </div>
+                <button @mousedown="setNewCV(!showNewCV)" :class="{selected: showNewCV}">New CV</button>
+                <div class="newCV dropMenu" v-if="showNewCV">
+                    <input v-model="newCVname"><button @click="saveAction(newCVname)">Save</button>
+                </div>
+            </span>
+            <button @mousedown="download">Download</button>
+        </div>
 
+        <div class="rowReverse">
+            <button v-if="loggedIn"  @click="logout" >Logout</button>
+            <button v-if="!loggedIn" :class="{selected: showLogin && register}" @click="toggleLogin(true)">Register</button>  
+            <button v-if="!loggedIn" :class="{selected: showLogin && !register}" @click="toggleLogin(false)">Login</button> 
+            <span v-if="loggedIn" class="centerText">Logged in: {{user.name}}</span>
+        </div>
+
+    </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapActions, mapMutations } from 'vuex';
 
 export default {
     name: 'Topbar',
+
+    data() { return {
+        newCVname: '',
+    }},
     computed:{
-        ...mapState(['title', 'loggedIn', 'showCVmenu', 'newCV', 'user', 'editMode', 'showLogin', 'register']),
+        ...mapState(['title', 'loggedIn', 'showCVmenu','showNewCV','content', 'newCV', 'user', 'editMode', 'showLogin', 'register', 'cvList']),
     },
 
     methods: {
-        ...mapMutations(['toggleEdit', 'toggleLogin']),
+        ...mapMutations(['toggleEdit', 'toggleLogin', 'setEditMode', 'setNewCV']),
+        ...mapActions(['logout', 'loadCV','saveAction', 'loadCVlist', 'deleteCV', 'deleteAll', 'download']),
     }
 }
 
@@ -35,52 +58,35 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.topbar{
-    display: grid;
-    grid-area: 1 / 1 / 2 / 4;
-    background-color: #2670d1;
-    box-shadow: inset 0px -4px 4px -4px rgba(0,0,0,1);
-    color: #eaf6ff;
+.cvMenu {
+    flex-direction: column;
+    min-width: 20vh;
+    padding-bottom: 8px;
+    text-align: center;
 }
 
-.topbarButtons{
-    z-index: 1;
-    grid-area: 1 / 2 / 2 / 3;
-    height: 85%;
+.cvList{
     display: flex;
-    margin-top: auto;
-    margin-bottom: auto;
+    flex-direction: column;
+    overflow: auto;
+    padding: 2px;
+    margin: 8px;
+    max-height: 25vh;
+    box-shadow: inset 1px 1px 2px 0px rgb(0, 0, 0, 0.75), inset -1px 0px 2px 0px rgba(255, 255, 255, 0.75);
 }
 
-.topbarButtons button{
-    color: inherit;
+.cvList button{
     border: none;
     height: 100%;
-    cursor: default;
     font-size: 16px;
-    padding: 5px 10px;
-    margin: 0px 5px;
-    user-select: none;
-    border-radius: 10px 10px 10px 10px;
-    border-width: 2px 2px 2px 2px;
+    margin: 0px;
+    box-shadow: none;
+    border-radius: 0px;
+
 }
 
-.topbar .middle{
-    justify-content: center;
-}
-
-.topbar .left{
-    grid-area: 1 / 1 / 2 / 2;
-}
-
-.topbar .right{
-    grid-area: 1 / 3 / 2 / 4;
-    flex-flow: row-reverse;
-    padding-right: 5%;
-}
-
-.topbar h1{
-    margin: 5px 0px;
-    padding-left: 25px;
+.newCV{
+    flex-direction: row;
+    padding: 10px;
 }
 </style>
