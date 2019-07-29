@@ -14,15 +14,16 @@ export default new Vuex.Store({
         loggedIn: false,
         autoLogin: false,
         key: null,
-        page: "cv",
+        page: "home",
         cvList: [],
         showCVmenu: false,
         showNewCV: false,
+        showEditWindow: false,
         content: CVobj,
         fonts: Fonts,
         user: {
             name: "tester",
-            email: "test@testmail.com",
+            email: "tester@mail.com",
             password: "testpassword",
         },
         register: false,
@@ -44,6 +45,7 @@ export default new Vuex.Store({
         setImgSize: (store, size) => store.content.style.imgSize = size,
         setEditMode: (store, value) => store.editMode = value,
         setNewCV: (store, value) => {store.showNewCV = value; store.showCVmenu = false},
+        setEditWindow: (store, show) => store.showEditWindow = show,
         sendCVcontent: (store, func) => store.getCVcontent = func,
         toggleLogin: (store, register) => {
             store.showLogin = register ? (!store.register || !store.showLogin) : (!store.showLogin || store.register);
@@ -92,6 +94,7 @@ export default new Vuex.Store({
 
         saveAction: async (context, name) => {
             context.state.content.cvName = name;
+            context.state.showNewCV = false;
             await Axios.post(context.state.uri + "/saveCV", {"key": context.state.key, "content": context.state.content});
         },
 
