@@ -1,38 +1,41 @@
 <template>
-  <div id="app" class="mainGridRows mainContent">
+  <div id="app" class="mainContent">
+      <!-- Top bar -->
       <Topbar/>
-      <span class="mainGridColumns">
-        <NavMenu/>
-        <cvEdit v-if="page === 'cv' && editMode"/> 
-        <CV v-else-if="page === 'cv'" class="CV" id="print"/>
-        <span v-else>
-          <div v-if="page === 'home'"> Funkweb CV Portal </div>
-          <div v-if="page === 'guide'"> Guide on how to use this site </div>    
-          <div v-if="page === 'tips'"> Tips on how to write a good CV </div>
-        </span>
-        
-        <span>
+
+      <!-- Main page -->
+      <div class="mainPage">
+        <cvPage v-if="page === 'cv'" />
+        <homePage v-else-if="page === 'home'" />
+        <HelpMenu v-else-if="page === 'guide'" />    
+        <TipPage v-else-if="page === 'tips'"/>
+      </div>
+
+        <!-- Bottom bar -->
+        <Bottombar/>
+
+        <!-- <span>
           <Login v-if="showLogin" class="topbar rowReverse"/>
           <Style v-if="page ==='cv'" />
-        </span>
-      </span>
+        </span> -->
   </div>
 </template>
 
 <script>
-// import { mapState, mapMutations } from 'vuex';
 import { mapState, mapMutations, mapActions } from 'vuex'
-import NavMenu from './components/NavMenu.vue'
-import CV from './components/CV.vue'
-import cvEdit from './components/CV_Edit.vue'
+import homePage from './components/homePage.vue'
+import cvPage from './components/CV_Page.vue'
 import Login from './components/Login.vue'
 import Style from './components/Style.vue'
 import Topbar from './components/Topbar.vue'
+import HelpMenu from './components/helpMenu.vue'
+import TipPage from './components/TipPage.vue'
+import Bottombar from './components/Bottombar.vue'
 
 export default {
   name: 'app',
   components: {
-    NavMenu, CV, Login, Style, cvEdit,Topbar,
+    homePage, Login, Style, cvPage,Topbar, HelpMenu, TipPage, Bottombar,
   },
   computed:{
       ...mapState(['page', 'showLogin', 'title', 'editMode', 'key', 'autoLogin']),
@@ -49,75 +52,64 @@ export default {
         this.setKey(localStorage.getItem("key")); 
         if(this.key != null && this.key.length > 0) this.login(true);
     }
+  }
 }
-
-}
-//1: 26426A - button pressed 
-//2: 325991 - button selected
-//3: 3E70B8 - button hover
-//4: 5F8BCA - button background
-//5: 84A7D8 - 
-//6: c9d6e9 - background
 </script>
 
 <style>
-body, html{
-    margin: 0px;
-    height: 100%;
-    background-color: #c9d6e9;
+:root {
+  --bg-image: url("./assets/bg_5.jpg");
+  --main-bg-color: white;
+  --main_content-bg-color: rgb(0, 0, 15, 0.8);
+  --topbar-bg-color: rgb(0, 0, 15, 0.8);
+  --cv_width: 700px;
+  /* var(--main_content-bg-color); */
 }
 
-.mainGridRows{
+html, body {
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+  color: white;
+}
+body{
+    background-image: var(--bg-image);
+    background-size: cover;
+    /* background-color: grey; */
+}
+
+.mainContent {
   display: grid;
-  grid-template-rows: 5% auto;
+  grid-auto-flow: row;
+  grid-template-rows: auto 1fr auto;
+  padding: 0px;
+  margin: 0px;
 }
 
-.mainGridColumns{
+.mainPageTitle{
+  text-align: center;
+  font-size: 48px;
+  padding-top: 48px;
+  font-weight: bold;
+}
+.mainPage{
+  margin: 0px auto;
+  overflow-y: hidden;
+}
+
+.mainPageLayout{
   display: grid;
-  grid-template-columns: 27% 46% 27%;
-}
-
-.mainContent{
-  display:grid;
-  grid-area: 2 / 1 / 3 / 4;
-}
-
-h1{
-    margin: auto 0px;
-    padding-left: 25px;
-    font-size: calc(100% + 0.9vw);
-}
-
-.topbar{
-    background-color: #5F8BCA;
-    box-shadow: inset 0px -2px 2px -2px rgba(0,0,0,1);
-    color: #eaf6ff;
-    padding: 0px 0px;
-    z-index: 2;
-}
-
-.topbar button{
-    color: inherit;
-    border: none;
-    cursor: default;
-    font-size: 16px;
-    padding: 5px 10px;
-    user-select: none;
-    border-width: 2px 2px 2px 2px;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  margin: 0px 60px;
+  /* background-color: var(--main_content-bg-color); */
 }
 
 .dropMenu{
     position: absolute;
-    display: flex;
-    background-color: #5F8BCA;
     z-index: 3;
-    box-shadow: inset -1px -1px 2px 0px rgb(0, 0, 0, 0.75), inset 1px 0px 2px 0px rgba(255, 255, 255, 0.75);
-}
-
-.middleTopbar{
-    justify-content: center;
-    display: flex;
-    flex-direction: row;
+    background-color: var(--main_content-bg-color);
+    min-width: 250px;
 }
 
 .rowReverse{
@@ -130,33 +122,18 @@ h1{
     margin-bottom: auto;
 }
 
-.boldText{
-    font-weight: bold;
-}
-
-.fullHeight{
-  height: 100%;
-}
+.boldText{font-weight: bold;}
+.fullHeight{height: 100%;}
 
 button{
   border: none;
   height: 100%;
+  color: inherit;
   background-color: transparent;
-  color: #eaf6ff;
-  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.85);
-
 }
-button.selected{
-  box-shadow: inset 3px 3px 3px 0px rgba(0, 0, 0, 0.75);
-  background-color: #325991;
-}
-button:hover{
-  background-color: #3E70B8;
-}
-button:active{
-  box-shadow: inset 5px 5px 4px 0px rgba(0, 0, 0, 0.75);
-  background-color: #26426A;
-}
+button.selected{}
+button:hover{}
+button:active{}
 button:focus {outline:none !important;}
 
 #app {
