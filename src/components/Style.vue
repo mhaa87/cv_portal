@@ -1,16 +1,17 @@
-<template><span>
-    Font: 
+<template><div class="styleOptions">
+    <br/><h1>Style otions</h1><br/>
+    Font: <br/>
     <select @change="(e) => setFont(e.target.value)">
         <option v-for="(value, key) in fonts" :key="key" :value="value">{{key}}</option>
     </select>
     <input class="numInput" type="number" @change="(e) => setFontSize(e.target.value)" :value="content.style.fontSize"><br>
-    Profile Image: 
+    Profile Image: <br/>
     <input @change="(e) => setImg(e.target.value)" :value="content.style.imgLink"><br>
-    Size:
+    Profile Image Size:<br/>
     <input class="imgSizeInput" type="number" @change="(e) => setImgSize(e.target.value)" :value="content.style.imgSize">
     <input @change="(e) => setImgSize(e.target.value)" type="range" min="100" max="250" :value="content.style.imgSize">
     <!-- {{content.style.imgSize}} -->
-</span></template>
+</div></template>
 
 <script>
 import { mapState, mapMutations } from 'vuex'
@@ -30,14 +31,10 @@ export default {
 </script>
 
 <style>
-.numInput{
-    width: 2.5em;
-}
+.numInput{width: 2.5em;}
+.imgSizeInput{width: 3.5em;}
 
-.imgSizeInput{
-    width: 3.5em;
-}
-
+.styleOptions{margin-left: 20px}
 input[type=range] {
     height: 28px;
     -webkit-appearance: none;

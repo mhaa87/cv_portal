@@ -1,17 +1,15 @@
 <template>
-<div class="topbar">
-    <h1>CV Portal</h1>
-    <NavMenu/>       
+<div>
+    
 </div>
 </template>
 
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
-import NavMenu from './NavMenu.vue'
 
 export default {
-    name: 'Topbar',
-    components: {NavMenu},
+    name: 'Bottombar',
+    components: {},
     data() { return {}},
     computed:{},
     methods: {}
@@ -21,16 +19,11 @@ export default {
 
 <style scoped>
 
-.topbar {
+div {
     background-color: var(--topbar-bg-color);
-    /* height: 150px; */
-    margin-bottom: 10px;
+    min-height: 35px;
     text-align: center;
+    margin-top: 10px;
 }
 
-h1{ 
-    padding: 10px;
-    margin: 0px;
-    font-size: 48px;
-}
 </style>
