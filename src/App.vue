@@ -9,6 +9,7 @@
         <homePage v-else-if="page === 'home'" />
         <HelpMenu v-else-if="page === 'guide'" />    
         <TipPage v-else-if="page === 'tips'"/>
+        <AdminPage v-else-if="page === 'admin'"/>
       </div>
 
         <!-- Bottom bar -->
@@ -31,11 +32,12 @@ import Topbar from './components/Topbar.vue'
 import HelpMenu from './components/helpMenu.vue'
 import TipPage from './components/TipPage.vue'
 import Bottombar from './components/Bottombar.vue'
+import AdminPage from './components/adminPage.vue'
 
 export default {
   name: 'app',
   components: {
-    homePage, Login, Style, cvPage,Topbar, HelpMenu, TipPage, Bottombar,
+    homePage, Login, Style, cvPage,Topbar, HelpMenu, TipPage, Bottombar, AdminPage,
   },
   computed:{
       ...mapState(['page', 'showLogin', 'title', 'editMode', 'key', 'autoLogin']),
@@ -75,7 +77,6 @@ html, body {
 body{
     background-image: var(--bg-image);
     background-size: cover;
-    /* background-color: grey; */
 }
 
 .mainContent {
@@ -102,25 +103,19 @@ body{
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: auto 1fr;
   margin: 0px 60px;
-  /* background-color: var(--main_content-bg-color); */
 }
 
-.dropMenu{
-    position: absolute;
-    z-index: 3;
-    background-color: var(--main_content-bg-color);
-    min-width: 250px;
-}
+.clickable{ z-index: 1; }
+.clickable:hover{ cursor: pointer; background-color: rgb(0,0,0, 0.075); }
 
 .rowReverse{
   display: flex;
   flex-direction: row-reverse;
 }
 
-.centerText{
-    margin-top: auto;
-    margin-bottom: auto;
-}
+.centerText{margin-top: auto;margin-bottom: auto;}
+.centerDiv{margin: auto auto;}
+.centerSpan{margin: auto auto; display: inline-block; text-align: center}
 
 .boldText{font-weight: bold;}
 .fullHeight{height: 100%;}
