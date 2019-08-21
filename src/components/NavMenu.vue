@@ -1,9 +1,10 @@
 <template>
     <div>
-        <button :class="{selected: page==='home'}" @mousedown="setPage('home')">Home</button>
-        <button :class="{selected: page==='cv'}" @mousedown="setPage('cv')">My CV</button>
-        <button :class="{selected: page==='guide'}" @mousedown="setPage('guide')">Guide</button>
-        <button :class="{selected: page==='tips'}" @mousedown="setPage('tips')">CV Tips</button>
+        <button :class="{selected: page ==='home'}" @mousedown="setPage('home')">Home</button>
+        <button :class="{selected: page ==='cv'}" @mousedown="setPage('cv')">My CV</button>
+        <button :class="{selected: page ==='guide'}" @mousedown="setPage('guide')">Guide</button>
+        <button :class="{selected: page ==='tips'}" @mousedown="setPage('tips')">CV Tips</button>
+        <button v-if="user.isAdmin" :class="{selected: page ==='admin'}" @mousedown="setPage('admin')">Admin</button>
     </div>
 </template>
 
@@ -12,7 +13,7 @@ import { mapState, mapMutations } from 'vuex';
 
 export default {
     name: 'NavMenu',
-    computed:{...mapState(['page']),},
+    computed:{...mapState(['page', 'user']),},
     methods: {...mapMutations(['setPage']),}
 }
 

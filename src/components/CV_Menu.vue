@@ -1,12 +1,9 @@
 <template>
-    <div class="cvMenu">   
-        <div class="cvName">"{{content.cvName}}"</div>
-        <button v-if="loggedIn" @mousedown="saveAction(content.cvName)" >Save</button>
-        <button @mousedown="download">Print/Download</button>
-        <button @mousedown="setNewCV(!showNewCV)" :class="{selected: showNewCV}">New CV</button>
-        <div class="newCV dropMenu" v-if="showNewCV">
-            <input v-model="newCVname"><button @click="saveAction(newCVname)">Save</button>
-        </div>
+    <div class="cvMenu">
+        <saveStatus v-if="isSaving"/>
+        <button v-if="loggedIn && isSaving === false" @click="saveButton()">Save </button>
+        <button @mousedown="download">Print/Download</button> 
+        <!-- <div class="cvName">"{{content.cvName}}"</div> -->
         <button v-if="loggedIn" @mouseover="loadCVlist(true)" @mouseleave="loadCVlist(false)">
             <div>Open</div>
             <div v-if="showCVmenu" class="dropMenu">
@@ -20,7 +17,11 @@
                 </div>
             </div>
         </button>
-
+        <button @mousedown="setEditWindow({show: true, info: {name: 'newCV'}})">New CV</button>
+        <!-- <div class="newCV dropMenu" v-if="showNewCV">
+            <input v-model="newCVname"><button @click="saveAction(newCVname)">Save</button>
+        </div> -->
+        <div></div>
     <!-- <div class="rowReverse">
         <button v-if="loggedIn"  @click="logout" >Logout</button>
         <button v-if="!loggedIn" :class="{selected: showLogin && register}" @click="toggleLogin(true)">Register</button>  
@@ -32,21 +33,30 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
+import saveStatus from './saveStatus.vue';
 
 export default {
     name: 'CV_Options',
-
+    components: {saveStatus,},
+    
     data() { return {
+        isSaving: false,
         newCVname: '',
     }},
+
     computed:{
-        ...mapState(['page', 'title', 'loggedIn', 'showCVmenu','showNewCV','content', 'newCV', 'user', 'editMode', 'showLogin', 'register', 'cvList']),
+        ...mapState(['page', 'title', 'loggedIn', 'showCVmenu','content', 'newCV', 'user', 'editMode', 'showLogin', 'register', 'cvList']),
     },
 
     methods: {
-        ...mapMutations(['toggleEdit', 'toggleLogin', 'setEditMode', 'setNewCV']),
+        ...mapMutations(['toggleEdit', 'toggleLogin', 'setEditMode', 'setEditWindow']),
         ...mapActions(['logout', 'loadCV','saveAction', 'loadCVlist', 'deleteCV', 'deleteAll', 'download']),
+
+        saveButton(){
+            this.isSaving = false;
+            this.saveAction(this.content.cvName);
+        }
     }
 }
 
@@ -61,12 +71,12 @@ export default {
 .cvMenu {
     display: grid;
     grid-auto-flow: column;
-    grid-template-columns: 1fr auto;
-    padding-top: 4px;
+    grid-template-columns: auto auto auto auto 1fr;
+    padding: 4px;
+    box-sizing: border-box;
     text-align: center;
     font-size: 18px;
     height: 100%;
-    margin: 0px 10px;
 }
 
 .cvMenu button{
@@ -95,7 +105,18 @@ export default {
     margin: 0px;
     box-shadow: none;
     border-radius: 0px;
+    box-sizing: border-box;
+}
 
+.dropMenu{
+    position: absolute;
+    z-index: 3;
+    /* background-color: var(--main_content-bg-color); */
+    background-color: black;
+    min-width: 250px;
+    box-sizing: border-box;
+    /* left: -50%; */
+    transform: translate(-50%, 0px);
 }
 
 .newCV{
