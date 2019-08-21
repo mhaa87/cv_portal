@@ -17,14 +17,18 @@ export default new Vuex.Store({
         page: "home",
         cvList: [],
         showCVmenu: false,
-        showNewCV: false,
         showEditWindow: false,
+        editWindow: {show: false, info: {}},
         content: CVobj,
         fonts: Fonts,
         user: {
             name: "tester",
             email: "tester@mail.com",
             password: "testpassword",
+            isAdmin: false,
+        },
+        admin: {
+            users: [],
         },
         register: false,
         editMode: false,
@@ -44,8 +48,7 @@ export default new Vuex.Store({
         setImg: (store, link) => store.content.style.imgLink = link,
         setImgSize: (store, size) => store.content.style.imgSize = size,
         setEditMode: (store, value) => store.editMode = value,
-        setNewCV: (store, value) => {store.showNewCV = value; store.showCVmenu = false},
-        setEditWindow: (store, show) => store.showEditWindow = show,
+        setEditWindow: (store, info) => store.editWindow = info,
         sendCVcontent: (store, func) => store.getCVcontent = func,
         toggleLogin: (store, register) => {
             store.showLogin = register ? (!store.register || !store.showLogin) : (!store.showLogin || store.register);
@@ -77,6 +80,10 @@ export default new Vuex.Store({
             if(store.error){store.errorMsg = data.msg; return;}
             context.state.loggedIn = data.status;
             context.state.key = data.key;
+            context.state.user.isAdmin = data.isAdmin;
+            if(data.isAdmin){
+                context.state.admin.users = (await Axios.post(store.uri + "/admin/getUsers", {"key": data.key})).data;
+            }
             store.showLogin = false;
             localStorage.setItem("key", data.key);
             localStorage.setItem("autoLogin", store.autoLogin ? 'true' : 'false');
@@ -94,7 +101,12 @@ export default new Vuex.Store({
 
         saveAction: async (context, name) => {
             context.state.content.cvName = name;
-            context.state.showNewCV = false;
+            await Axios.post(context.state.uri + "/saveCV", {"key": context.state.key, "content": context.state.content});
+        },
+
+        newCV: async (context, name) => {
+            context.state.content = CVobj;
+            context.state.content.cvName = name;
             await Axios.post(context.state.uri + "/saveCV", {"key": context.state.key, "content": context.state.content});
         },
 
@@ -117,7 +129,11 @@ export default new Vuex.Store({
 
         deleteAll: async(context) => {
             await Axios.post(context.state.uri + "/deleteAll", {"key": context.state.key});
-        }
+        },
+
+        adminGetUserList: async(context) => {
+            await Axios.post(context.state.uri + "/deleteAll", {"key": context.state.key});
+        },
 
     }
 
