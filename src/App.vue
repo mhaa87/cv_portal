@@ -60,10 +60,11 @@ export default {
 
 <style>
 :root {
-  --bg-image: url("./assets/bg_5.jpg");
+  --bg-image: url("./assets/bg_13.jpg");
+  /* --bg-image: url("./assets/bg_7.png"); */
   --main-bg-color: white;
-  --main_content-bg-color: rgb(0, 0, 15, 0.8);
-  --topbar-bg-color: rgb(0, 0, 15, 0.8);
+  --main_content-bg-color: rgb(0, 0, 15, 0.85);
+  --topbar-bg-color: rgb(0, 0, 15, 0.85);
   --cv_width: 700px;
   /* var(--main_content-bg-color); */
 }
@@ -106,13 +107,20 @@ body{
 }
 
 .clickable{ z-index: 1; }
-.clickable:hover{ cursor: pointer; background-color: rgb(0,0,0, 0.075); }
+.clickable:hover{ 
+  cursor: pointer; 
+  padding: 3px;
+  /* color: red; */
+  box-shadow: 2px 0px 2px 0px rgba(0, 0, 0, 0.65), -2px 0px 2px 0px rgba(0, 0, 0, 0.65), 0px 2px 2px 0px rgba(0, 0, 0, 0.65), 0px -2px 2px 0px rgba(0, 0, 0, 0.65);
+}
+.minSize{ min-height: 1em;}
 
 .rowReverse{
   display: flex;
   flex-direction: row-reverse;
 }
 
+.centerTextAlign{text-align: center}
 .centerText{margin-top: auto;margin-bottom: auto;}
 .centerDiv{margin: auto auto;}
 .centerSpan{margin: auto auto; display: inline-block; text-align: center}
