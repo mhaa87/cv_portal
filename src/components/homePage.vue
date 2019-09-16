@@ -7,15 +7,17 @@
         <button @click="setPage('cv')">Click to begin!</button>
       </div>
       <div class="info">Print or download the CV as pdf.</div>
+      <div></div>
+      <userComment />
     </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex';
-
+import userComment from './userComment.vue'
 export default {
   name: 'homePage',
-
+  components: {userComment},
   data() { return {}},
   mounted(){},
   computed:{},

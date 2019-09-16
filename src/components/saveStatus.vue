@@ -1,11 +1,10 @@
 <template>
 <div class="saveStatus">
-    Saving:
-    <span class="spinner">
+    <div class="spinner">
         <div class="bounce1"></div>
         <div class="bounce2"></div>
         <div class="bounce3"></div>
-    </span>
+    </div>
 </div>
 </template>
 
@@ -25,12 +24,12 @@ export default {
 <style scoped>
 
 .saveStatus {
-    background-color: var(--topbar-bg-color);
+    /* background-color: var(--topbar-bg-color); */
     /* min-height: 35px; */
     /* text-align: center; */
     /* margin-top: 10px; */
-    position: relative;
-    z-index: 2;
+    /* position: relative; */
+    /* z-index: 2; */
 }
 
 .spinner {

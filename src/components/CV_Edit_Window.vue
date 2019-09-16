@@ -1,57 +1,67 @@
 <template>
 <div class="editWindow">
   
-  <div v-if="editInfo.name === 'name'">
-    <span class="name">Name: </span>
+  <div v-if="editInfo.type === 'name'" class="centerTextAlign">
+    <div class="name">Name: </div>
     <input class="name" v-model="content.name"> 
   </div>
   
-  <div v-else-if="editInfo.name === 'info'">
+  <div v-else-if="editInfo.type === 'info'" class="centerTextAlign">
     <h2>Personal information:</h2>
     <div :key="i" v-for="(item, i) in content.personInfo">
       <input v-model="content.personInfo[i].title">
       <input v-model="content.personInfo[i].text">
+      Show: <input class="checkbox" type="checkbox" v-model="content.personInfo[i].show"> 
+      <button class="deleteButton" @click="content.personInfo.splice(i, 1)">Delete</button>
     </div>
   </div>
 
-  <div v-else-if="editInfo.name === 'image'" class="profileImg">
+  <div v-else-if="editInfo.type === 'image'" class="profileImg">
     <h2>Profile image:</h2>
     <img :src="content.style.imgLink"><br>
     Link: <input @change="(e) => setImg(e.target.value)" :value="content.style.imgLink"><br>
   </div>
 
-  <div v-else-if="editInfo.name === 'intro'">
-    <input class="boldText" v-model="content.intro.title"><br/><br/>
-    <textarea v-model="content.intro.text"></textarea> 
+  <div v-else-if="editInfo.type === 'text'" class="listElementEdit">
+    <div><input class="boldText" v-model="editInfo.data.content.title"></div>
+    <textarea class="editText" v-model="editInfo.data.content.text"></textarea> 
   </div>
 
-  <div v-else-if="editInfo.name === 'other'">
-    <input class="boldText" v-model="content.other.title"><br/><br/>
-    <textarea v-model="content.other.text"></textarea> 
-  </div>
-
-  <div v-else-if="editInfo.name === 'list'" class="listElementEdit">
-      <div>Title:<input class="titleInput" v-model="editInfo.item.title"></div>
+  <div v-else-if="editInfo.type === 'list'" class="listElementEdit">
+      <div>Title:<input class="titleInput" v-model="editInfo.data.item.title"></div>
       <div> Duration:
-        <input type="number" class="monthInput" v-model="editInfo.item.duration.from.month">
-        <input type="number" class="yearInput" v-model="editInfo.item.duration.from.year">
+        <input type="number" min="1" max="12" class="monthInput" v-model="editInfo.data.item.duration.from.month">
+        <input type="number" min="1000" max="9999" class="yearInput" v-model="editInfo.data.item.duration.from.year">
         -
-        <input type="number" class="monthInput" v-model="editInfo.item.duration.to.month">
-        <input type="number" class="yearInput" v-model="editInfo.item.duration.to.year">
+        <input type="number" min="1" max="12" class="monthInput" v-model="editInfo.data.item.duration.to.month">
+        <input type="number" min="1000" max="9999" class="yearInput" v-model="editInfo.data.item.duration.to.year">
       </div>
-      <textarea class="listEditText" v-model="editInfo.item.text"></textarea>
+      <textarea class="editText" v-model="editInfo.data.item.text"></textarea>
   </div>
 
-  <div v-else-if="editInfo.name === 'newCV'">
+  <div v-else-if="editInfo.type === 'listTitle'">
+    <div class="name">Title: </div>
+    <input class="name" v-model="editInfo.data.list.title">
+  </div>
+
+  <div v-else-if="editInfo.type === 'newCV'">
     <h2>New CV</h2>
-    <div style="text-align: center">Name: <input v-model="newCVname"></div>
+    <div style="text-align: center">
+      <div>Name: <input v-model="newCVname"></div>
+      <input type="radio" name="temp" value="current" v-model="newCVtemplate" checked>Current CV
+            <input type="radio" name="lang" value="english" v-model="newCVtemplate" checked>English
+      <input type="radio" name="lang" value="norsk" v-model="newCVtemplate">Norsk<br/>
+    </div>
   </div>
 
   <div class="buttons">
-    <button v-if="editInfo.name === 'newCV'" @click="setEditWindow({show: false, info: {}})">Cancel</Button>
-    <button v-if="editInfo.name === 'list'" @click="deleteListElement()">Delete</Button>
+    <button v-if="editInfo.type === 'newCV'" @click="closeWindow()">Cancel</Button>
+    <button v-else-if="editInfo.type === 'list'" @click="deleteListElement(editInfo.data.list.items)">Delete</Button>
+    <button v-else-if="editInfo.type === 'listTitle' && editInfo.data.list.canDelete" class="deleteButton" @click="deleteListElement(content.mainContent)">Delete</button>
+    <button v-else-if="editInfo.type === 'info'" @click="content.personInfo.push({title:'title', text: '...', 'show': true})">Add</button>
     <button @click="okButton()">Ok</Button>
   </div>
+  <div class="error" v-if="errorMsg !== false">Error: {{errorMsg}}</div>
 </div>
 </template>
 
@@ -64,44 +74,51 @@ export default {
   data() { return {
     newCVname: '',
     defaultListItem: { duration: {from: {year: "2000", month: "01"}, to: {year: "2000", month: "01"}}, title: "Tittel", text: "Info..."},
+    newCVtemplate: 'current',
+    errorMsg: false,
   }},
 
   props: {editInfo: Object,},
   computed:{...mapState(['content', 'editWindow']),},
   methods: {
-    ...mapMutations(['setEditWindow', 'setImg', 'setImgSize']),
+    ...mapMutations(['setEditWindow', 'setImg', 'setImgSize', 'setDefaultCV']),
     ...mapActions(['saveAction']),
     
-    deleteListElement(){
-      this.editInfo.list.items.splice(this.editInfo.index, 1);
-      this.setEditWindow({show: false, info: {}});
+    deleteListElement(list){
+      list.splice(this.editInfo.data.index, 1);
+      this.setEditWindow({show: false, type: {}});
     },
 
     okButton(){
-      if(this.editWindow.info.name === 'newCV'){this.saveAction(this.newCVname)}
-      this.setEditWindow({show: false, info: {}});
+      if(this.validateInput() === false) return;
+      if(this.editWindow.type === 'newCV') {
+        if(this.newCVtemplate !== 'current') this.setDefaultCV(this.newCVtemplate);
+        this.saveAction(this.newCVname);
+      }
+      this.closeWindow();
     },
 
-    getDurationText(duration){
-        var text = "";
-        if(duration.from.month.length > 0) text += duration.from.month + ".";
-        text += duration.from.year;
-        if(duration.to.year.length > 0) text += " - ";
-        if(duration.to.month.length > 0) text += duration.to.month + ".";
-        if(duration.to.year.length > 0) text += duration.to.year;
-        return text;
+    validateInput(){
+      this.errorMsg = false;
+      if(this.editInfo.type === 'name' && this.content.name.length < 1){this.errorMsg="Name can not be empty";}
+      else if(this.editInfo.type === 'newCV' && this.newCVname.length < 1){this.errorMsg="CV name can not be empty";}
+      else if(this.editInfo.type === 'text' && this.editInfo.data.content.title.length < 1){this.errorMsg="Title name can not be empty";}
+      else if(this.editInfo.type === 'listTitle' && this.editInfo.data.list.title.length < 1){this.errorMsg="List name can not be empty";}
+      else if(this.editInfo.type === 'list'){
+        if(this.editInfo.data.item.title.length < 1){this.errorMsg="Title can not be empty";}
+        else if(this.editInfo.data.item.duration.from.year.length < 4){this.errorMsg="The year in the from date is not valid";}
+      }else if(this.editInfo.type === 'info'){
+        var i;
+        for(i in this.content.personInfo){
+          if(this.content.personInfo[i].title.length < 1) {this.errorMsg="Info title can not be empty"; break;}
+        }
+      }
+      
+      return this.errorMsg === false;
     },
 
-    sortListElements: function (a, b) {
-        var from = this.dateToNumber(b.duration.from.month, b.duration.from.year) - this.dateToNumber(a.duration.from.month, a.duration.from.year)
-        var to = this.dateToNumber(b.duration.to.month, b.duration.to.year) - this.dateToNumber(a.duration.to.month, a.duration.to.year)
-        return (to === 0) ?  from : to;
-    },
+    closeWindow(){this.setEditWindow({show: false, type: '', data: {}, error: false});}
 
-    dateToNumber(month, year){
-        if(year.length > 0) return (year * 100 + ((month.length > 0) ? month*1 : 0));
-        return 0;
-    },
   },
 
 }
@@ -132,11 +149,18 @@ export default {
 .monthInput{width: 2.5em}
 .yearInput{width: 4em}
 .titleInput{width: 25em}
-.listEditText{min-height: 8em; max-width: 600px;}
+.editText{min-height: 8em; max-width: 600px;}
 .listElementEdit{
   display: grid;
   grid-row-gap: 5px;
   grid-template-columns: auto;
+}
+
+.error {
+  color: red; 
+  font-weight: bold; 
+  padding-bottom: 5px;
+  text-align: center
 }
 
 .name{
@@ -144,11 +168,12 @@ export default {
   font-weight: bold;
   margin-bottom: 0.5em;
   font-family: inherit;
+  width: 18em;
 }
 
 h2 {text-align: center}
 
-.buttons{
+.buttons {
   height: 55px;
   text-align: center;
 }
@@ -158,6 +183,8 @@ button {
   height: 100%;
   font-size: 18px;
 }
+
+.deleteButton:hover {font-size: 18px;}
 
 button:hover{
   font-size: 28px;

@@ -3,11 +3,14 @@
     <template v-for="(list, i) in content.lists">
         <template v-if="list.show">
           <!-- List title -->
-          <div :key="'h' + i" class="boldText headline clickable fullRow">{{list.title}}</div> 
+          <div :key="'h' + i" class="boldText headline clickable fullRow"
+          @click="setEditWindow({show: true, type: 'listTitle', data: {'list': list}})">
+          {{list.title}}</div> 
 
           <template v-for="(item, j) in list.items">
               <!-- Clickable area -->
-              <div :key="'a'+i+j" class="clickable fullRow" @click="openEdit({name: 'list', 'item': item, 'list': list, 'index': j})" :style="{gridRow: elementRowStyle(i, j)}"></div>
+              <div :key="'a'+i+j" class="clickable fullRow" :style="{gridRow: elementRowStyle(i, j)}"
+                @click="setEditWindow({show: true, type: 'list', data: {'item': item, 'list': list, 'index': j}})"></div>
               <!-- Duration -->
               <span :key="'d'+i+j" class="leftCol" :style="{gridRow: elementRowStyle(i, j)}"><nobr>{{getDurationText(item.duration)}}</nobr></span> 
               <!-- Title & Text-->

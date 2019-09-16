@@ -1,33 +1,31 @@
 <template>
     <div class="cvMenu">
         <saveStatus v-if="isSaving"/>
-        <button v-if="loggedIn && isSaving === false" @click="saveButton()">Save </button>
+        <button v-else-if="loggedIn" @click="saveAction(content.cvName)">Save</button>
+        <!-- <button @click="saveButton()">Saving</button> -->
         <button @mousedown="download">Print/Download</button> 
         <!-- <div class="cvName">"{{content.cvName}}"</div> -->
-        <button v-if="loggedIn" @mouseover="loadCVlist(true)" @mouseleave="loadCVlist(false)">
+        <button v-if="loggedIn" @mouseover="setCVmenu(true)" @mouseleave="setCVmenu(false)">
             <div>Open</div>
             <div v-if="showCVmenu" class="dropMenu">
                 <div class="cvList">
-                    <button v-for="(cv, i) in cvList" :key="i" @click="loadCV(cv)" :class="{selected: cv === content.cvName}">{{cv}}</button>
+                    <button v-for="(cv, i) in cvList" :key="i" @click="setCV(cv.content)" :class="{selected: cv.cvName === content.cvName}">{{cv.cvName}}</button>
                 </div>
-                <div v-if="1 > cvList.length">No saved CVs </div>
+                <div v-if="1 > cvList.length">No saved CVs</div>
                 <div v-else>
                     <button @click="deleteCV">Delete '{{content.cvName}}'</button><br>
-                    <!-- <button @click="deleteAll">Delete All</button> -->
                 </div>
             </div>
         </button>
-        <button @mousedown="setEditWindow({show: true, info: {name: 'newCV'}})">New CV</button>
-        <!-- <div class="newCV dropMenu" v-if="showNewCV">
-            <input v-model="newCVname"><button @click="saveAction(newCVname)">Save</button>
-        </div> -->
+        <button @mousedown="setEditWindow({show: true, type: 'newCV'})">New CV</button>
+
         <div></div>
-    <!-- <div class="rowReverse">
+    <div class="rowReverse">
         <button v-if="loggedIn"  @click="logout" >Logout</button>
         <button v-if="!loggedIn" :class="{selected: showLogin && register}" @click="toggleLogin(true)">Register</button>  
         <button v-if="!loggedIn" :class="{selected: showLogin && !register}" @click="toggleLogin(false)">Login</button> 
         <span v-if="loggedIn" class="centerText">Logged in: {{user.name}}</span>
-    </div> -->
+    </div>
 
     </div>
 </template>
@@ -41,22 +39,23 @@ export default {
     components: {saveStatus,},
     
     data() { return {
-        isSaving: false,
         newCVname: '',
     }},
 
     computed:{
-        ...mapState(['page', 'title', 'loggedIn', 'showCVmenu','content', 'newCV', 'user', 'editMode', 'showLogin', 'register', 'cvList']),
+        ...mapState(['isSaving', 'loggedIn', 'showCVmenu','content', 'user', 'showLogin', 'register', 'cvList']),
     },
 
     methods: {
-        ...mapMutations(['toggleEdit', 'toggleLogin', 'setEditMode', 'setEditWindow']),
+        ...mapMutations(['toggleEdit', 'toggleLogin', 'setEditMode', 'setEditWindow','setCV', 'setCVmenu']),
         ...mapActions(['logout', 'loadCV','saveAction', 'loadCVlist', 'deleteCV', 'deleteAll', 'download']),
 
         saveButton(){
-            this.isSaving = false;
-            this.saveAction(this.content.cvName);
-        }
+            this.isSaving = true;
+            this.saveAction({'name': this.content.cvName, 'saveDone': () => setTimeout(this.saveDone, 600)});
+        },
+
+        saveDone(){ this.isSaving = false }
     }
 }
 
