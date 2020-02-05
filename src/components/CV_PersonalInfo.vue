@@ -1,9 +1,9 @@
 <template>
-  <div class="clickable minSize" :class="{pInfo: narrow === false}" @click="setEditWindow({'show': true, type: 'info'})">
+  <div class="minSize" :class="{pInfo: narrow === false}">
       <template v-for="(item, i) in content.personInfo">
         <template v-if="item.show">
-          <div class="leftCol"><b>{{item.title}}:</b></div>
-          <div>{{item.text}}</div> 
+          <div :key="'l' + i" class="leftCol"><b>{{item.title}}:</b></div>
+          <div :key="'r' + i">{{item.text}}</div> 
         </template>
       </template>
   </div>

@@ -4,26 +4,24 @@
         <template v-if="list.show">
 
             <template v-if="list.type === 'text'">
-                <div @click="setEditWindow({'show': true, type: 'text', data: {'content': list, 'index': i}})" class="clickable minSize fullRow">
-                    <b class="headline">{{list.title}}</b>
+                <div :key="'text_' + i">
+                    <b class="cvItemHeadline">{{list.title}}</b>
                     <br>{{list.text}}
                 </div>
             </template>
 
             <template v-if="list.type === 'list'">
-                <div class="boldText headline clickable minSize" @click="setEditWindow({show: true, type: 'listTitle', data: {'list': list, 'index': i}})">
-                    {{list.title}}
-                </div> 
+                <div :key="'list_' + i"> <b class="cvItemHeadline">{{list.title}} </b> </div>
 
-                <div v-for="(item, j) in list.items" class="clickable minSize listGrid"
-                @click="setEditWindow({show: true, type: 'list', data: {'item': item, 'list': list, 'index': j}})">
-                    <div class="duration"><nobr>{{getDurationText(item.duration)}}</nobr></div>
-                    <div><b>{{item.title}}</b></div><div></div>
+                <div v-for="(item, j) in list.items" :key="'item:_'+i + '_' + j">
+                    <!-- <div><span class="duration">{{getDurationText(item)}}</span><b>{{item.title}}</b></div> -->
+                    <div><span class="duration">Test</span><b>{{item.title}}</b></div>
+                    <!-- <div><b>{{item.title}}</b></div><div></div> -->
                     <div>{{item.text}}</div>
                 </div>
             </template>
 
-            <div class="emptyRow"></div>
+            <div :key="'empty_' + i" class="emptyRow"></div>
         </template>
     </template>
   </div>
@@ -43,14 +41,15 @@ export default {
   methods: {
     ...mapMutations(['setEditWindow']),
 
-    getDurationText(duration){
-        var text = "";
-        if(duration.from.month.length > 0) text += duration.from.month + ".";
-        text += duration.from.year;
-        if(duration.to.year.length > 0) text += " - ";
-        if(duration.to.month.length > 0) text += duration.to.month + ".";
-        if(duration.to.year.length > 0) text += duration.to.year;
-        return text;
+    getDurationText(item){
+      console.log(item.fromDate + ' - ' + item.toDate)
+      return item.fromDate + ' - ' + item.toDate;
+    },
+
+    formatDate (date) {
+      if (!date) return null;
+      const [year, month, day] = date.split('-');
+      return month + '.' + year;
     },
 
     openEdit(info){
@@ -68,8 +67,9 @@ export default {
 <style scoped>
 .emptyRow{padding-top: 1em}
 
-.headline{font-size: 1.2em}
+.cvItemHeadline{font-size: 1.2em}
 .duration{width: 9em;}
+.elTitle{white-space: pre}
 .listGrid{
     display: grid;
     grid-template-columns: auto 1fr;

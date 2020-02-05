@@ -1,5 +1,5 @@
 <template>
-  <div @click="setEditWindow({'show': true, type: 'image'})" class="profileImg clickable">
+  <div class="profileImg">
     <img :style="imgStyle()" :src="content.style.imgLink">
   </div>
 </template>

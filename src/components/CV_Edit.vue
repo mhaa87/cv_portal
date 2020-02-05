@@ -1,124 +1,41 @@
-<template><div class="CV">
-<div class="cvContent cvPadding" :style="cvStyle">
-
-    <!-- Name & personal info -->
-    <h2 class="midLeftCol name">
-        <input v-model="content.name">
-    </h2>
-    <span class="leftCol"><span :key="getKey(i)" v-for="(item, i) in content.personInfo">
-        <input class="boldText" v-model="item.title">
-    </span></span>
-    <span class="midCol"><span :key="getKey(i)" v-for="(item, i) in content.personInfo">
-        <input v-model="item.text">
-    </span></span>
-    <span class="profileImg rightCol"><img :style="imgStyle" :src="content.style.imgLink"></span>
+<template>
+  <v-container class="cvEditPage">
     
-    <!-- Intro text -->
-    <span class="leftCol">
-        <input class="boldText" v-model="content.intro.title">
-    </span><br>
-    <div class="fullRow">
-        <textarea v-model="content.intro.text"></textarea> 
-    </div>
-    <div class="fullRow emptyRow"></div>
+    <EditPersonalInfo />
 
-    <!-- Experience and Education lists -->
-    <template v-for="(list, i) in content.lists">
-        <span :key="getKey(i)" class="fullRow">
-            <input class="boldText" v-model="list.title">
-            <button @click="list.items.unshift(defaultListItem)">Add</button>
-            <button @click="list.items.sort(sortListElements)">Sort list</button>
-        </span>          
-        
-        <template v-for="(item, j) in list.items">
-            <span :key="getKey(j)" class="fullRow boldText">
-                From:<input type="number" class="monthInput" v-model="item.duration.from.month">
-                <input type="number" class="yearInput" v-model="item.duration.from.year">
-                To:<input type="number" class="monthInput" v-model="item.duration.to.month">
-                <input type="number" class="yearInput" v-model="item.duration.to.year">
-                Title:<input v-model="item.title">
-                <button v-if="editMode" @click="list.items.splice(i,1)">Delete</button>
-            </span>
-            <textarea :key="getKey(j)" class="fullRow" v-model="item.text"></textarea>
-        </template>
-        <div :key="getKey(i)" class="fullRow emptyRow"></div>
-    </template>
+    <EditContent :key="'mc' + i" v-for="(list, i) in content.mainContent" 
+      :data="{'content': list, 'index': i}"/>
 
-    <!-- Other information -->
-    <span class="leftCol">
-        <input class="boldText" v-model="content.other.title">
-    </span><br>
-    <span class="fullRow">
-        <textarea v-model="content.other.text"></textarea> 
-    </span><br><br>
-
-</div>
-</div></template>
+  </v-container>
+</template>
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex';
+import CV from '@/components/CV.vue'
+import cvMenu from '@/components/CV_Menu.vue'
+import EditWindow from './CV_Edit_Window.vue'
+import EditContent from './CV_Edit_Content.vue'
+import EditPersonalInfo from './CV_Edit_pInfo.vue'
 
 export default {
-  name: 'CV',
+  name: 'MyCV',
+
+  components: {EditContent, EditPersonalInfo, EditWindow, CV, cvMenu},
 
   data() { return {
-    showCVmenu: false,
-    cvList: [],
-    showNewCV: false,
-    newName: "",
-    defaultListItem: { duration: {from: {year: "2000", month: "01"}, to: {year: "2000", month: "01"}}, title: "Tittel", text: "Info..."},
+    defaultListItem: { duration: {from: {year: "2000", month: "01"}, to: {year: "2000", month: "01"}}, title: "Title", text: "Info...",},
   }},
 
-  mounted(){
-    //   this.sendCVcontent(this.sendContent);
-  },
-
-  computed:{
-    ...mapState(['loggedIn', 'content', 'fonts', 'editMode']),
-    getKey() {var i=0; return (j) =>{return i++ + '' + j}},
-    cvStyle() {return {'font-family': this.font, 'font-size': this.fontSize + 'px'}},
-    imgStyle() {return {'height': this.content.style.imgSize + 'px'}},
-  },
-
+  mounted(){},
+  computed:{...mapState(['content', 'fonts', 'editWindow']),},
   methods: {
-    ...mapMutations(['setFont', 'setFontSize',  'setEditMode', 'sendCVcontent']),
-    ...mapActions(['saveAction', 'cvMenuAction', 'deleteCV', 'deleteAll', 'loadCV', 'profileImgStyle']),
+    ...mapMutations(['setFont', 'setFontSize','setImg', 'setImgSize', 'setEditWindow', 'mainContentSwap']),
 
-    sendContent(){return this.content;},
+    hideButton(show){ return show ? 'Hide' : 'Show'},
 
-    cvMenu(showMenu){
-        this.showNewCV = false;
-        if(showMenu){this.cvMenuAction((list) => {this.cvList = list; this.showCVmenu = true})}
-        else this.showCVmenu = false;
-    },
-
-    loadNewContent(newContent){ 
-        this.content = newContent; 
-        this.newName = newContent.cvName
-        this.setFont(newContent.font);
-        this.setFontSize(newContent.fontSize);
-    },
-
-    download(){
-        if(this.editMode) return;
-        var cv = document.getElementById("print");
-        var popupWin = window.open('', '_blank', 'width= 1000px,height=900,location=no,left=200px, top=20px');
-        popupWin.document.open();
-        popupWin.document.write('<html><title>Preview</title><link rel="stylesheet" type="text/css" href="cvStyle.css" /></head><body onload="window.print()">'
-        + '<div class="CV">'); 
-        popupWin.document.write(cv.innerHTML);
-        popupWin.document.write('</div></body></html>');
-        popupWin.document.close();
-    },
-    
-    getDurationText(duration){
-        var text = "";
-        if(duration.from.month.length > 0) text += duration.from.month + ".";
-        text += duration.from.year;
-        if(duration.to.year.length > 0) text += "-";
-        if(duration.to.month.length > 0) text += duration.to.month + ".";
-        if(duration.to.year.length > 0) text += duration.to.year;
-        return text;
+    addList(){
+      var i = this.content.mainContent.push({'type': 'text', 'title': 'Title', 'text': '...', 'show': true, 'canDelete': true});
+      this.setEditWindow({show: true, type: 'listTitle', data: {'list': this.content.mainContent[i-1], 'index': i-1}})
     },
 
     sortListElements: function (a, b) {
@@ -131,61 +48,81 @@ export default {
         if(year.length > 0) return (year * 100 + ((month.length > 0) ? month*1 : 0));
         return 0;
     },
-  }
+
+  },
+
 
 }
-//1: 26426A - button pressed 
-//2: 325991 - button selected
-//3: 3E70B8 - button hover
-//4: 5F8BCA - button background
+
 </script>
 
 <style scoped>
-
-.leftCol{grid-column: 1 / 2; padding-right: 25px;}
-.midCol{grid-column: 2 / 3}
-.rightCol{grid-column: 3 / 4}
-.midLeftCol{grid-column: 1 / 3}
-.midRightCol{grid-column: 2 / 4}
-.fullRow{grid-column: 1 / 4}
-.emptyRow{padding-top: 1em}
-
-.profileImg{
-  grid-row: 1 / 3;
-  display: flex;
-  flex-direction: row-reverse;
-}
-
-.profileImg img{height: 150px;}
-.cvContent h2{margin: 0px 0px 20px 0px}
-.name{font-size: 2em}
-.headline{font-size: 1.2em}
-
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
-}
-
-.yearInput{max-width: 2.5em;}
-.monthInput{max-width: 1.5em;}
-
-textarea{
+.cvEditPage{
+  /* display:grid; */
+  /* grid-template-columns: 1fr auto 1fr; */
+  /* box-sizing: border-box; */
+  /* padding-top: 30px; */
+  /* height: 100%; */
+  text-align: middle;
   width: 100%;
-  resize:vertical;
 }
 
-.cvContent{
+.sidePage, .cvMenu, .middlePage{
+  /* background-color: var(--main_content-bg-color); */
+} 
+
+.verticalMenu{
+  flex-direction: column;
+}
+
+button{
+  height: auto;
+  padding: 8px 8px;
+  font-size: 0.9em;
+  /* width: 200px; */
+}
+
+/* .moveButtons {height: 35px}
+.moveButtons button{
+  display: inline-block;
+  margin-top: 0px;
+  padding: 0px; 
+  height: 100%; 
+  width: 20px;
+} */
+.titleButton{text-align: left;}
+.checkbox{
+  width: 18px; 
+  height: 100%;
+  margin: auto;
+}
+
+button:hover{background-color: rgb(255, 255, 255, 0.25);}
+
+.middlePage {
+  /* overflow: auto; */
+  /* padding-bottom: 10px; */
+  width: var(--cv_width);
+}
+
+.sidePage{
+  /* text-align: center; */
+  font-size: 18px;
+  margin: 60px 30px;
+  padding: 10px;
+  min-height: 450px;
+  min-width: 275px;
+  max-width: 350px;
+}
+.mainContent{
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  grid-template-rows: auto 1fr;
-}
+  grid-template-columns: auto auto auto auto auto 1fr;
 
-.CV{
-  padding: 25px 25px 0px 30px;
-  overflow: auto;
-  background-color: rgb(255, 255, 255);
-  box-shadow: 1px 0px 3px 0px rgba(0, 0, 0, 0.45), -1px 0px 3px 0px rgba(0, 0, 0, 0.45);
+}
+.title{
+  font-weight: bold;
+  font-size: 1.1em;
 }
 
 </style>
+

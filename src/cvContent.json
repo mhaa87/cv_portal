@@ -1,0 +1,31 @@
+{
+    "name": "Firstname Lastname",
+    "cvName": "default",
+    "layout": 1,
+    "personInfo": [
+        {"title": "Mobile", "text": "12345678", "show": true},
+        {"title": "Email", "text": "email@hotmail.com", "show": true},
+        {"title": "Place", "text": "City", "show": true}
+    ],
+    "mainContent": [
+        {"type": "text", "title": "Introduction", "text": "...", "show": true, "canDelete": false, "layoutPos": 1},
+        {"type": "list", "title": "Experience", "show": true, "canDelete": false,
+            "items": [
+                {"fromDate": "2018-05", "toDate": "", "title": "Job 3", "text": "Info..."},
+                {"fromDate": "2017-06", "toDate": "2018-03", "title": "Job 2", "text": "Info..."}, 
+                {"fromDate": "2016-09", "toDate": "2017-04", "title": "Job 1", "text": "Info..."}
+        ]},
+        {"type": "list", "title": "Education", "show": true, "canDelete": false,
+            "items": [
+                {"fromDate": "2014-08", "toDate": "2017-07", "title": "Study 2", "text": "Info..."}, 
+                {"fromDate": "2013-08", "toDate": "2014-07", "title": "Study 1", "text": "Info..."}
+        ]},
+        {"type": "text", "title": "Other", "text": "...", "show": true, "canDelete": false}
+    ],
+    "style": {    
+        "font": "'Times New Roman', Times, serif", 
+        "fontSize": 14,
+        "imgLink": "defaultProfileImg.png",
+        "imgSize": "150"
+    }
+}

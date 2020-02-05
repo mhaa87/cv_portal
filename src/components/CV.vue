@@ -11,28 +11,39 @@
   https://icon-library.net/images/default-user-icon/default-user-icon-3.jpg
   http://www.myptzone.com/assets/1/18/placeholder_male.png?9
   -->
-  <!-- Edit Window -->
-  <EditWindow v-if="editWindow.show" :editInfo="{'type': editWindow.type, 'data': editWindow.data}" />
   
   <div class="CV" id="print">
 
     <div class="cvContent cvPadding" :style="cvStyle">
-      <!-- Layout 1 -->
-      <template v-if="content.layout === 1">
-        <div> <name/> <pInfo :narrow="false"/> <div class="emptyRow"></div> </div>
-        <pImg />
-        <cvMainContent class="fullRow" />
-      </template>
+      <!-- Name & personal info -->
+      <div> <name/> <pInfo :narrow="false"/> <div class="emptyRow"></div> </div>
+      <!-- Profile image -->
+      <pImg />
 
-      <!-- Layout 2 -->
-      <template v-else-if="content.layout === 2">
-        <div>
-          <name/>
-          <div class="fullRow emptyRow"></div>
-          <cvMainContent class="fullRow" />
-        </div>
-        <div><pImg /><pInfo :narrow="true"/> </div>
+      <!-- Main content -->
+      <div class="fullRow mainContent">
+        <template v-for="(list, i) in content.mainContent">
+          <template v-if="list.show">
+
+              <div :key="'text_' + i" v-if="list.type === 'text'"  class="fullRow">
+                <b class="cvItemHeadline">{{list.title}}</b>
+                <br>{{list.text}}
+              </div>
+
+              <template v-if="list.type === 'list'">
+                  <div :key="'list_' + i" class="fullRow"> <b class="cvItemHeadline">{{list.title}} </b> </div>
+
+                  <template v-for="(item, j) in list.items">
+                      <div :key="'l_h_' + i + '_' + j" class="duration firstRow">{{getDurationText(item)}}</div>
+                      <div :key="'l_t_' + i + '_' + j" class="secondRow"><b>{{item.title}}</b></div>
+                      <div :key="'l_c_' + i + '_' + j" class="secondRow">{{item.text}}</div>
+                  </template>
+              </template>
+
+              <div :key="'empty_' + i" class="emptyRow"></div>
+          </template>      
       </template>
+    </div>
 
     </div>
   </div>
@@ -66,6 +77,16 @@ export default {
   methods: {
     ...mapMutations(['setFont', 'setFontSize', 'setEditWindow']),
     ...mapActions(['openEdit', 'saveAction', 'cvMenuAction', 'deleteCV', 'deleteAll', 'loadCV', 'profileImgStyle']),
+
+    getDurationText(item){
+      return item.fromDate + ' - ' + item.toDate;
+    },
+
+    formatDate (date) {
+      if (!date) return null;
+      const [year, month, day] = date.split('-');
+      return month + '.' + year;
+    },
   },
   
   mounted() {}
@@ -77,14 +98,25 @@ export default {
 <style scoped>
 
 .fullRow{grid-column: 1 / 3}
+.firstRow{grid-column: 1 / 2}
+.secondRow{grid-column: 2 / 3}
 .emptyRow{padding-top: 1em}
+
+.mainContent{
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-column-gap: 5px;
+}
 
 .cvContent{
   display: grid;
   grid-template-columns: 1fr auto;
-  grid-column-gap: 5px;
+  grid-column-gap: 3px;
   grid-row-gap: 5px;
 }
+
+.cvItemHeadline{font-size: 1.2em}
+.duration{margin-right: 10px}
 
 .cvContent h2{margin: 0px 0px 20px 0px}
 .headline{font-size: 1.2em}
@@ -107,9 +139,8 @@ textarea{
 .CV{
   box-sizing: border-box;
   color: black;
-  width: var(--cv_width);
   min-height: 990px;
-  padding: 20px 30px;
+  padding: 0.5in;
   background-color: rgb(255, 255, 255);
   box-shadow: inset 2px 0px 3px 0px rgba(0, 0, 0, 0.45), inset -2px 0px 3px 0px rgba(0, 0, 0, 0.45), inset 0px 2px 3px 0px rgba(0, 0, 0, 0.45);
 }

@@ -1,37 +1,45 @@
 <template>
-    <div>
-        <button :class="{selected: page ==='home'}" @mousedown="setPage('home')">Home</button>
-        <button :class="{selected: page ==='cv'}" @mousedown="setPage('cv')">My CV</button>
-        <button :class="{selected: page ==='guide'}" @mousedown="setPage('guide')">Guide</button>
-        <button :class="{selected: page ==='tips'}" @mousedown="setPage('tips')">CV Tips</button>
-        <button v-if="user.isAdmin" :class="{selected: page ==='admin'}" @mousedown="setPage('admin')">Admin</button>
-    </div>
+    <v-app-bar dense app>
+        <!-- <v-toolbar-title>CV Portal</v-toolbar-title> -->
+        <div class="flex-grow-1"></div>
+        <v-toolbar-items class="center transBG">
+            <v-btn text to="/" exact>Home</v-btn>
+            <v-btn text to="/mycv">My CV</v-btn>
+            <v-btn text to="/guide">Guide</v-btn>
+            <v-btn text to="/cvtips">CV Tips</v-btn>
+            <v-btn text to="/feedback">Feedback</v-btn>
+            <v-btn v-if="user.isAdmin" text to="/admin">Admin</v-btn>
+        </v-toolbar-items>
+        <div class="flex-grow-1"></div>
+
+        <v-toolbar-items class="mr-n4">
+            <!-- <span v-if="loggedIn" class="centerText">Logged in: {{user.name}}</span> -->
+            <v-btn text v-if="loggedIn"  @click="logout" >Logout</v-btn>
+            <v-btn text v-if="!loggedIn" :class="{selected: showLogin && !register}" @click="toggleLogin(false)">Login</v-btn> 
+            <v-btn text v-if="!loggedIn" :class="{selected: showLogin && register}" @click="toggleLogin(true)">Register</v-btn>  
+        </v-toolbar-items>
+
+    </v-app-bar>
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapMutations,mapActions } from 'vuex';
 
 export default {
     name: 'NavMenu',
-    computed:{...mapState(['page', 'user']),},
-    methods: {...mapMutations(['setPage']),}
+    computed:{...mapState(['page', 'user', 'loggedIn', 'showLogin', 'register']),},
+    methods: {...mapMutations(['setPage', 'toggleLogin',]),...mapActions(['logout']),}
+    
 }
 
 </script>
 
 <style scoped>
 
-button {
-    font-size: 18px;
-    padding-bottom: 8px;
-    min-width: 150px;
+.center{margin: 0px auto}
+.transBG{
+   /* background-color: red!important; */
+   background-color: rgb(255, 0, 0, 0) !important;;
+   /* opacity: 0.1; */
 }
-
-.selected{
-    font-size: 32px;
-    font-weight: bold;
-    /* text-decoration: underline; */
-}
-
-button:hover {font-size: 32px}
 </style>

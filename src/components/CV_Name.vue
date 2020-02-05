@@ -1,5 +1,5 @@
 <template>
-  <div @click="setEditWindow({'show': true, type: 'name'})" class="name clickable minSize">
+  <div class="name minSize">
     {{content.name}}
   </div>
 </template>

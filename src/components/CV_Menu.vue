@@ -1,33 +1,36 @@
 <template>
-    <div class="cvMenu">
-        <saveStatus v-if="isSaving"/>
-        <button v-else-if="loggedIn" @click="saveAction(content.cvName)">Save</button>
-        <!-- <button @click="saveButton()">Saving</button> -->
-        <button @mousedown="download">Print/Download</button> 
-        <!-- <div class="cvName">"{{content.cvName}}"</div> -->
-        <button v-if="loggedIn" @mouseover="setCVmenu(true)" @mouseleave="setCVmenu(false)">
-            <div>Open</div>
-            <div v-if="showCVmenu" class="dropMenu">
-                <div class="cvList">
-                    <button v-for="(cv, i) in cvList" :key="i" @click="setCV(cv.content)" :class="{selected: cv.cvName === content.cvName}">{{cv.cvName}}</button>
-                </div>
+    <v-toolbar flat dense max-height="32">
+        <v-toolbar-items max-height="32" class="ml-n4">
+            <v-btn small max-height="32" v-if="loggedIn" @click="saveAction(content.cvName)" :loading='isSaving' :disabled='isSaving'>Save</v-btn>
+            <v-btn small max-height="32" @mousedown="download">Print/Download</v-btn> 
+            <!-- <div class="cvName">"{{content.cvName}}"</div> -->
+
+            <v-menu offset-y>
+                <template v-slot:activator="{ on }">
+                    <v-btn max-height="32" small v-on="on">Your CVs</v-btn>
+                </template>
                 <div v-if="1 > cvList.length">No saved CVs</div>
-                <div v-else>
-                    <button @click="deleteCV">Delete '{{content.cvName}}'</button><br>
-                </div>
-            </div>
-        </button>
-        <button @mousedown="setEditWindow({show: true, type: 'newCV'})">New CV</button>
+                <v-list v-else>
+                    <v-list-item v-for="(cv, i) in cvList" :key="i" @click="setCV(cv.content)">
+                        <v-list-item-title>{{ cv.cvName }}</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="deleteCV">Delete '{{content.cvName}}'</v-list-item>
+                </v-list>
+            </v-menu>
 
-        <div></div>
-    <div class="rowReverse">
-        <button v-if="loggedIn"  @click="logout" >Logout</button>
-        <button v-if="!loggedIn" :class="{selected: showLogin && register}" @click="toggleLogin(true)">Register</button>  
-        <button v-if="!loggedIn" :class="{selected: showLogin && !register}" @click="toggleLogin(false)">Login</button> 
-        <span v-if="loggedIn" class="centerText">Logged in: {{user.name}}</span>
-    </div>
+            <v-btn small max-height="32" @mousedown="setEditWindow({show: true, type: 'newCV'})">New CV</v-btn>
+        </v-toolbar-items>
 
-    </div>
+        <div class="flex-grow-1"></div>
+
+        <!-- <v-toolbar-items class="mr-n4">
+            <span v-if="loggedIn" class="centerText">Logged in: {{user.name}}</span>
+            <v-btn max-height="32" small v-if="loggedIn"  @click="logout" >Logout</v-btn>
+            <v-btn max-height="32" small v-if="!loggedIn" :class="{selected: showLogin && !register}" @click="toggleLogin(false)">Login</v-btn> 
+            <v-btn max-height="32" small v-if="!loggedIn" :class="{selected: showLogin && register}" @click="toggleLogin(true)">Register</v-btn>  
+        </v-toolbar-items> -->
+
+    </v-toolbar>
 </template>
 
 <script>
@@ -63,20 +66,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+.v-toolbar__content{padding: 0px}
 .cvName{
     margin: auto;
 }
 
-.cvMenu {
-    display: grid;
-    grid-auto-flow: column;
-    grid-template-columns: auto auto auto auto 1fr;
-    padding: 4px;
-    box-sizing: border-box;
-    text-align: center;
-    font-size: 18px;
-    height: 100%;
-}
+.noPadding {padding: 0px;}
 
 .cvMenu button{
     font-size: inherit;

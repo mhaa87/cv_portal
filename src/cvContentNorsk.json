@@ -1,0 +1,31 @@
+{
+    "name": "Ola Nordmann",
+    "cvName": "default",
+    "layout": 1,
+    "personInfo": [
+        {"title": "Mobil", "text": "12345678", "show": true},
+        {"title": "Email", "text": "email@hotmail.com", "show": true},
+        {"title": "Bosted", "text": "Oslo", "show": true}
+    ],
+    "mainContent": [
+        {"type": "text", "title": "Introduksjon", "text": "...", "show": true, "canDelete": false},
+        {"type": "list", "title": "Erfaring", "show": true, "canDelete": false,
+            "items": [
+                {"fromDate": "", "toDate": "", "title": "Jobb 3", "text": "Info..."},
+                {"fromDate": "", "toDate": "", "title": "Jobb 2", "text": "Info..."}, 
+                {"fromDate": "", "toDate": "", "title": "Jobb 1", "text": "Info..."}
+        ]},
+        {"type": "list", "title": "Utdanning", "show": true, "canDelete": false,
+            "items": [
+                {"fromDate": "", "toDate": "", "title": "Studie 2", "text": "Info..."}, 
+                {"fromDate": "", "toDate": "", "title": "Studie 1", "text": "Info..."}
+        ]},
+        {"type": "text", "title": "Annet", "text": "...", "show": true, "canDelete": false}
+    ],
+    "style": {    
+        "font": "'Times New Roman', Times, serif", 
+        "fontSize": 14,
+        "imgLink": "defaultProfileImg.png",
+        "imgSize": "150"
+    }
+}

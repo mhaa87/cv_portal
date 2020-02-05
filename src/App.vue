@@ -1,67 +1,52 @@
 <template>
-  <div id="app" class="mainContent">
-      <!-- Top bar -->
-      <Topbar/>
+  <v-app>
 
-      <!-- Main page -->
-      <div class="mainPage">
-        <cvPage v-if="page === 'cv'" />
-        <homePage v-else-if="page === 'home'" />
-        <HelpMenu v-else-if="page === 'guide'" />    
-        <TipPage v-else-if="page === 'tips'"/>
-        <AdminPage v-else-if="page === 'admin'"/>
-      </div>
+    <NavMenu/>
+    <Login v-if="showLogin" />
+    <v-content transition="slide-x-transition" class="mainContent">
+        <router-view></router-view>
+    </v-content>
 
-        <!-- Bottom bar -->
-        <Bottombar/>
-
-        <!-- <span>
-          <Login v-if="showLogin" class="topbar rowReverse"/>
-          <Style v-if="page ==='cv'" />
-        </span> -->
-  </div>
+  </v-app>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
-import homePage from './components/homePage.vue'
-import cvPage from './components/CV_Page.vue'
+import NavMenu from './components/NavMenu.vue'
 import Login from './components/Login.vue'
-import Style from './components/Style.vue'
-import Topbar from './components/Topbar.vue'
-import HelpMenu from './components/helpMenu.vue'
-import TipPage from './components/TipPage.vue'
-import Bottombar from './components/Bottombar.vue'
-import AdminPage from './components/adminPage.vue'
-
+ 
 export default {
-  name: 'app',
-  components: {
-    homePage, Login, Style, cvPage,Topbar, HelpMenu, TipPage, Bottombar, AdminPage,
-  },
+  name: "App",
+  components: {NavMenu, Login},
+
+  data: () => ({}),
+
   computed:{
-      ...mapState(['page', 'showLogin', 'title', 'editMode', 'key', 'autoLogin']),
+    ...mapState(['page', 'showLogin', 'title', 'editMode', 'key', 'autoLogin', 'commentList']),
   },
 
   methods: {
-      ...mapMutations(['setKey', 'setAutoLogin']),
-      ...mapActions(['pageLoad', 'login']),
+    ...mapMutations(['setKey', 'setAutoLogin']),
+    ...mapActions(['pageLoad', 'login', 'getComments']),
+    showLoginWindow() {return true}
   },
 
   mounted() {
-    this.setAutoLogin(localStorage.getItem("autoLogin") === "true");
-    if(this.autoLogin){
-        this.setKey(localStorage.getItem("key")); 
-        if(this.key != null && this.key.length > 0) this.login(true);
-    }
+  this.setAutoLogin(localStorage.getItem("autoLogin") === "true");
+  if(this.autoLogin){
+      this.setKey(localStorage.getItem("key")); 
+      if(this.key != null && this.key.length > 0) this.login(true);
   }
-}
+  this.getComments();
+  }
+
+};
 </script>
 
 <style>
 :root {
-  --bg-image: url("./assets/bg_13.jpg");
-  /* --bg-image: url("./assets/bg_7.png"); */
+  /* --bg-image: url("./assets/bg_13.jpg"); */
+  --bg-image: url("https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80");
   --main-bg-color: white;
   --main_content-bg-color: rgb(0, 0, 15, 0.85);
   --topbar-bg-color: rgb(0, 0, 15, 0.85);
@@ -69,23 +54,14 @@ export default {
   /* var(--main_content-bg-color); */
 }
 
-html, body {
-  height: 100%;
-  padding: 0px;
-  margin: 0px;
-  color: white;
-}
-body{
-    background-image: var(--bg-image);
-    background-size: cover;
+.lightPrimaryColors {
+  color: var(--v-darkText-base) !important;
+  background-color: var(--v-primary-lighten1) !important;
 }
 
-.mainContent {
-  display: grid;
-  grid-auto-flow: row;
-  grid-template-rows: auto 1fr auto;
-  padding: 0px;
-  margin: 0px;
+.darkPrimaryColors {
+  color: var(--v-darkText-base) !important;
+  background-color: var(--v-primary-darken1) !important;
 }
 
 .mainPageTitle{
@@ -97,6 +73,7 @@ body{
 .mainPage{
   margin: 0px auto;
   overflow-y: hidden;
+  margin-bottom: 20px;
 }
 
 .mainPageLayout{
@@ -105,6 +82,8 @@ body{
   grid-template-rows: auto 1fr;
   margin: 0px 60px;
 }
+
+.fullWidth{width: 100%}
 
 .clickable{ z-index: 1; }
 .clickable:hover{ 
@@ -128,7 +107,7 @@ body{
 .boldText{font-weight: bold;}
 .fullHeight{height: 100%;}
 
-button{
+/* button{
   border: none;
   height: 100%;
   color: inherit;
@@ -137,7 +116,7 @@ button{
 button.selected{}
 button:hover{}
 button:active{}
-button:focus {outline:none !important;}
+button:focus {outline:none !important;} */
 
 #app {
     height: 100%;
